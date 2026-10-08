@@ -1,3 +1,4 @@
+// 품질 검사. 가공이 끝난 LOT에 합격 또는 불합격을 기록한다.
 import { ActionForm } from "@/components/ActionForm";
 import { Badge, Empty, Field, PageHeader, Panel, inputClass } from "@/components/ui";
 import { inspectLot } from "@/lib/actions";

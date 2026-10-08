@@ -1,3 +1,4 @@
+// 작업지시. 생성, 작업자 시작, 예정 상태 취소를 한다. 취소는 삭제 대신 사유를 이력에 남긴다.
 import { ActionForm } from "@/components/ActionForm";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { Badge, Empty, Field, PageHeader, Panel, Progress, inputClass } from "@/components/ui";

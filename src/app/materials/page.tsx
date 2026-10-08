@@ -1,3 +1,4 @@
+// 자재 입고. RAW-YYYYMMDD-NNN 형식의 LOT를 만든다.
 import { ActionForm } from "@/components/ActionForm";
 import { Badge, Empty, Field, PageHeader, Panel, inputClass } from "@/components/ui";
 import { receiveMaterial } from "@/lib/actions";

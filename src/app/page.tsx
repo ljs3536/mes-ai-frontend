@@ -1,3 +1,4 @@
+// 대시보드. LOT 단계별 수량과 진행 중 작업, 열린 경보를 보여 준다.
 import { Badge, PageHeader, Panel } from "@/components/ui";
 import { getDashboard } from "@/lib/api";
 import Link from "next/link";

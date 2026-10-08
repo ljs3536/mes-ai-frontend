@@ -1,3 +1,4 @@
+// 센서·AI 진입. 파형과 모델 화면은 센서 분석 앱(3001)에서 연다.
 import { PageHeader, Panel } from "@/components/ui";
 
 export default function MonitoringPage() {

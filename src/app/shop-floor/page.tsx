@@ -1,3 +1,4 @@
+// 가공 라인. 설비별 진행 수량과 상태를 보고 작업을 보류하거나 재개한다.
 import { ActionForm } from "@/components/ActionForm";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { Badge, PageHeader, Panel, Progress, formatTime } from "@/components/ui";

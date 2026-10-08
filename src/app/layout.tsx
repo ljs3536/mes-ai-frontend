@@ -1,3 +1,4 @@
+// MES 화면. 입고, 작업지시, 가공, 품질, 출하, 이력, 센서·AI 진입을 한 앱에서 제공한다.
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { AppShell } from "@/components/AppShell";

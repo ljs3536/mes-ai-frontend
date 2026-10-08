@@ -1,3 +1,4 @@
+// 출하. 합격 LOT를 출하하고 출하 기록을 남긴다.
 import { ActionForm } from "@/components/ActionForm";
 import { Badge, Empty, Field, PageHeader, Panel, inputClass } from "@/components/ui";
 import { shipLot } from "@/lib/actions";

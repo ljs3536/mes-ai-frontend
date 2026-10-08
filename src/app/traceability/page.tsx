@@ -1,3 +1,4 @@
+// 이력 추적. LOT 번호로 입고부터 출하까지의 이벤트를 조회한다.
 import { Badge, Empty, PageHeader, Panel, formatTime, inputClass } from "@/components/ui";
 import { getTrace } from "@/lib/api";
 
