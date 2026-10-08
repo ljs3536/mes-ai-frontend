@@ -15,7 +15,7 @@ export function ActionForm({
   children?: React.ReactNode;
   submitLabel: string;
   className?: string;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
 }) {
   const [state, formAction, pending] = useActionState(action, null);
 
@@ -26,7 +26,9 @@ export function ActionForm({
         className={
           variant === "primary"
             ? btnClass
-            : "rounded-lg bg-white/10 px-4 py-2 text-sm text-zinc-100 hover:bg-white/15 disabled:opacity-50"
+            : variant === "danger"
+              ? "shrink-0 rounded-lg border border-rose-500/30 px-3 py-1.5 text-xs text-rose-300 hover:bg-rose-500/10 disabled:opacity-50"
+              : "rounded-lg bg-white/10 px-4 py-2 text-sm text-zinc-100 hover:bg-white/15 disabled:opacity-50"
         }
         disabled={pending}
         type="submit"

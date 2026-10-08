@@ -10,6 +10,7 @@ const TONE: Record<string, string> = {
   PLANNED: "bg-zinc-500/20 text-zinc-300",
   IN_PROGRESS: "bg-amber-500/15 text-amber-300",
   COMPLETED: "bg-emerald-500/15 text-emerald-300",
+  CANCELLED: "bg-zinc-500/10 text-zinc-500 line-through",
   IDLE: "bg-zinc-500/20 text-zinc-300",
   RUN: "bg-emerald-500/15 text-emerald-300",
   STOP: "bg-rose-500/15 text-rose-300",
@@ -19,12 +20,12 @@ const TONE: Record<string, string> = {
   PENDING: "bg-amber-500/15 text-amber-300",
 };
 
-export function Badge({ value }: { value: string }) {
-  const label =
-    lotStatusLabel[value] ??
-    woStatusLabel[value] ??
-    machineStatusLabel[value] ??
-    value;
+const LABELS = { lot: lotStatusLabel, wo: woStatusLabel, machine: machineStatusLabel };
+
+export function Badge({ value, kind }: { value: string; kind?: keyof typeof LABELS }) {
+  const label = kind
+    ? (LABELS[kind][value] ?? value)
+    : (lotStatusLabel[value] ?? woStatusLabel[value] ?? machineStatusLabel[value] ?? value);
   return (
     <span
       className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${TONE[value] ?? "bg-white/8 text-zinc-300"}`}

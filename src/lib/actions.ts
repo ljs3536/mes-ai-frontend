@@ -55,6 +55,14 @@ export async function startWork(_: ActionState, fd: FormData) {
   );
 }
 
+export async function cancelWorkOrder(_: ActionState, fd: FormData) {
+  return run(
+    `/work-orders/${num(fd, "workOrderId")}/cancel`,
+    { reason: str(fd, "reason") },
+    (wo) => `${wo.woNo} 취소됨`,
+  );
+}
+
 export async function holdMachine(_: ActionState, fd: FormData) {
   return run(`/machines/${num(fd, "machineId")}/hold`, undefined, (m) => `${m.name} 정지 · LOT HOLD`);
 }

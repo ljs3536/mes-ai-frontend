@@ -12,6 +12,7 @@ export const woStatusLabel: Record<string, string> = {
   IN_PROGRESS: "진행중",
   COMPLETED: "완료",
   HOLD: "보류",
+  CANCELLED: "취소",
 };
 
 export const machineStatusLabel: Record<string, string> = {

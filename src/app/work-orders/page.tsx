@@ -1,7 +1,7 @@
 import { ActionForm } from "@/components/ActionForm";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { Badge, Empty, Field, PageHeader, Panel, Progress, inputClass } from "@/components/ui";
-import { createWorkOrder, startWork } from "@/lib/actions";
+import { cancelWorkOrder, createWorkOrder, startWork } from "@/lib/actions";
 import { getLots, getMachines, getOperators, getWorkOrders } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -106,6 +106,7 @@ export default async function WorkOrdersPage() {
                   <th>진행</th>
                   <th>작업자</th>
                   <th>상태</th>
+                  <th>관리</th>
                 </tr>
               </thead>
               <tbody>
@@ -120,7 +121,25 @@ export default async function WorkOrdersPage() {
                     </td>
                     <td>{wo.operator?.name ?? "-"}</td>
                     <td>
-                      <Badge value={wo.status} />
+                      <Badge kind="wo" value={wo.status} />
+                    </td>
+                    <td className="w-72">
+                      {wo.status === "PLANNED" ? (
+                        <ActionForm
+                          action={cancelWorkOrder}
+                          submitLabel="취소"
+                          variant="danger"
+                          className="flex flex-wrap items-center gap-2"
+                        >
+                          <input type="hidden" name="workOrderId" value={wo.id} />
+                          <input
+                            className={`${inputClass} w-40! py-1.5! text-xs`}
+                            name="reason"
+                            placeholder="취소 사유"
+                            required
+                          />
+                        </ActionForm>
+                      ) : null}
                     </td>
                   </tr>
                 ))}
