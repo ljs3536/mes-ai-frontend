@@ -11,7 +11,7 @@ const NAV = [
   { href: "/quality", label: "품질 검사" },
   { href: "/shipping", label: "출하" },
   { href: "/traceability", label: "이력 추적" },
-  { href: "/monitoring", label: "센서·AI (2단계)" },
+  { href: "/monitoring", label: "센서·AI" },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
