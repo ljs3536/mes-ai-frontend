@@ -3,6 +3,7 @@ import { lotStatusLabel, machineStatusLabel, woStatusLabel } from "@/lib/domain"
 const TONE: Record<string, string> = {
   RAW: "bg-sky-500/15 text-sky-300",
   WIP: "bg-amber-500/15 text-amber-300",
+  PROCESSED: "bg-violet-500/15 text-violet-300",
   HOLD: "bg-rose-500/15 text-rose-300",
   IN_STOCK: "bg-emerald-500/15 text-emerald-300",
   SHIPPED: "bg-zinc-500/20 text-zinc-300",
@@ -93,6 +94,20 @@ export const btnClass =
 /** API는 공장 현지 시각(Asia/Seoul)을 타임존 없이 내려준다. */
 export function formatTime(value: string) {
   return value.replace("T", " ").slice(0, 16);
+}
+
+export function Progress({ value, max }: { value: number; max: number }) {
+  const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-1.5 min-w-16 flex-1 overflow-hidden rounded-full bg-white/8">
+        <div className="h-full rounded-full bg-amber-400 transition-all" style={{ width: `${pct}%` }} />
+      </div>
+      <span className="w-20 text-right font-mono text-xs text-zinc-400">
+        {value}/{max}
+      </span>
+    </div>
+  );
 }
 
 export function Empty({ children }: { children: React.ReactNode }) {

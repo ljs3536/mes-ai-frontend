@@ -6,13 +6,13 @@ import { getLots } from "@/lib/api";
 export const dynamic = "force-dynamic";
 
 export default async function QualityPage() {
-  const lots = await getLots(["HOLD", "WIP"]);
+  const lots = await getLots(["PROCESSED", "HOLD", "WIP"]);
 
   return (
     <>
       <PageHeader
         title="품질 검사"
-        description="합격 LOT는 완제품 창고(IN_STOCK), 불합격/보류는 검사대기(HOLD)로 격리합니다."
+        description="설비 가공이 끝난 LOT(가공완료)를 판정합니다. 합격은 완제품 창고(IN_STOCK), 불합격/보류는 검사대기(HOLD)로 격리합니다."
       />
       <main className="grid gap-6 p-8 xl:grid-cols-[380px_minmax(0,1fr)]">
         <Panel title="판정">
@@ -41,7 +41,7 @@ export default async function QualityPage() {
             </ActionForm>
           )}
         </Panel>
-        <Panel title="검사 대기 / 가공중">
+        <Panel title="가공완료 / 검사대기 / 가공중">
           {lots.length === 0 ? (
             <Empty>대상이 없습니다.</Empty>
           ) : (

@@ -11,8 +11,8 @@
 | `/` | 공장 운영 현황 (LOT 단계별 수, 설비, 알림) |
 | `/materials` | 자재 입고, `RAW-YYYYMMDD-NNN` LOT 발행 |
 | `/work-orders` | 작업지시 발행, 작업자 선택 후 작업 시작 (WIP) |
-| `/shop-floor` | Machine A/B 상태, 설비 정지·LOT HOLD, 점검 완료 |
-| `/quality` | 품질 판정 (합격 → 완제품, 불합격 → HOLD) |
+| `/shop-floor` | Machine A/B 통신 상태·센서값·진행률 (2초 자동 갱신), 설비 정지·LOT HOLD, 점검 완료 |
+| `/quality` | 가공완료 LOT 품질 판정 (합격 → 완제품, 불합격 → HOLD) |
 | `/shipping` | 완제품 출하 |
 | `/traceability` | LOT 이력 타임라인 |
 | `/monitoring` | 2단계 센서·AI 연동 자리 |

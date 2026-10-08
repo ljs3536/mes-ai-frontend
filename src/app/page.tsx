@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 
 const PIPELINE = [
   { key: "raw", href: "/materials", label: "자재 입고" },
-  { key: "wip", href: "/shop-floor", label: "가공" },
+  { key: "wip", href: "/shop-floor", label: "가공중" },
+  { key: "processed", href: "/quality", label: "가공완료" },
   { key: "hold", href: "/quality", label: "품질/HOLD" },
   { key: "stock", href: "/shipping", label: "완제품" },
   { key: "shipped", href: "/shipping", label: "출하" },
@@ -22,7 +23,7 @@ export default async function HomePage() {
         description="고압 밸브 · 정밀 배관 · 센서 하우징 가공 라인의 입고부터 출하까지"
       />
       <main className="space-y-6 p-8">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
           {PIPELINE.map((step, index) => (
             <Link key={step.key} href={step.href}>
               <Panel className="hover:border-amber-500/30">

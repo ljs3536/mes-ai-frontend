@@ -61,6 +61,8 @@ export type WorkOrder = {
   quantity: number;
   status: string;
   startedAt: string | null;
+  producedQty: number;
+  completedAt: string | null;
   createdAt: string;
   machine: Machine;
   lot: Lot;
@@ -79,13 +81,25 @@ export type LotTrace = Lot & {
   events: TraceEvent[];
 };
 
+export type SensorValue = {
+  code: string;
+  value: number;
+  unit: string;
+};
+
 export type MachineDetail = Machine & {
   activeWorkOrder: WorkOrder | null;
   openAlerts: Alert[];
+  online: boolean;
+  lastSeenAt: string | null;
+  sensors: SensorValue[];
 };
 
 export type Dashboard = {
-  counts: Record<"raw" | "wip" | "hold" | "stock" | "shipped" | "running", number>;
+  counts: Record<
+    "raw" | "wip" | "processed" | "hold" | "stock" | "shipped" | "running",
+    number
+  >;
   machines: Machine[];
   alerts: Alert[];
   recentLots: Lot[];

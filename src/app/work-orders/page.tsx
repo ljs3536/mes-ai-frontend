@@ -1,5 +1,6 @@
 import { ActionForm } from "@/components/ActionForm";
-import { Badge, Empty, Field, PageHeader, Panel, inputClass } from "@/components/ui";
+import { AutoRefresh } from "@/components/AutoRefresh";
+import { Badge, Empty, Field, PageHeader, Panel, Progress, inputClass } from "@/components/ui";
 import { createWorkOrder, startWork } from "@/lib/actions";
 import { getLots, getMachines, getOperators, getWorkOrders } from "@/lib/api";
 
@@ -16,6 +17,7 @@ export default async function WorkOrdersPage() {
 
   return (
     <>
+      <AutoRefresh intervalMs={3000} />
       <PageHeader
         title="작업지시"
         description="관리자가 설비와 제품을 지정하고, 작업자가 본인 ID를 선택해 작업을 시작하면 LOT가 WIP로 전환됩니다."
@@ -101,7 +103,7 @@ export default async function WorkOrdersPage() {
                   <th>제품</th>
                   <th>설비</th>
                   <th>LOT</th>
-                  <th>수량</th>
+                  <th>진행</th>
                   <th>작업자</th>
                   <th>상태</th>
                 </tr>
@@ -113,7 +115,9 @@ export default async function WorkOrdersPage() {
                     <td>{wo.productName}</td>
                     <td>{wo.machine.name}</td>
                     <td className="font-mono text-xs">{wo.lot.lotNo}</td>
-                    <td>{wo.quantity}</td>
+                    <td className="w-48">
+                      <Progress value={wo.producedQty} max={wo.quantity} />
+                    </td>
                     <td>{wo.operator?.name ?? "-"}</td>
                     <td>
                       <Badge value={wo.status} />
