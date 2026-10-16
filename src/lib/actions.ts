@@ -1,7 +1,10 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { api, ApiError } from "./api";
+import { SESSION_COOKIE } from "./session";
 
 export type ActionState = { ok: boolean; message: string } | null;
 
@@ -9,10 +12,11 @@ async function run(
   path: string,
   body: Record<string, unknown> | undefined,
   success: (data: Record<string, string>) => string,
+  method = "POST",
 ): Promise<ActionState> {
   try {
     const data = await api<Record<string, string>>(path, {
-      method: "POST",
+      method,
       body: body ? JSON.stringify(body) : undefined,
     });
     revalidatePath("/", "layout");
@@ -25,6 +29,58 @@ async function run(
 
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? "").trim();
 const num = (fd: FormData, key: string) => Number(fd.get(key));
+
+export async function login(_: ActionState, fd: FormData) {
+  try {
+    const data = await api<{ token: string }>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ employeeNo: str(fd, "employeeNo"), password: str(fd, "password") }),
+    });
+    (await cookies()).set(SESSION_COOKIE, data.token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 12,
+    });
+  } catch (e) {
+    if (e instanceof ApiError) return { ok: false, message: e.message };
+    throw e;
+  }
+  redirect("/");
+}
+
+export async function logout() {
+  (await cookies()).delete(SESSION_COOKIE);
+  redirect("/login");
+}
+
+export async function createEmployee(_: ActionState, fd: FormData) {
+  return run(
+    "/operators",
+    {
+      employeeNo: str(fd, "employeeNo"),
+      name: str(fd, "name"),
+      role: str(fd, "role"),
+      password: str(fd, "password"),
+    },
+    (op) => `${op.name} 사원을 등록했습니다.`,
+  );
+}
+
+export async function updateEmployee(_: ActionState, fd: FormData) {
+  const password = str(fd, "password");
+  return run(
+    `/operators/${num(fd, "operatorId")}`,
+    {
+      name: str(fd, "name"),
+      role: str(fd, "role"),
+      password: password || null,
+    },
+    (op) => `${op.name} 사원 정보를 바꿨습니다.`,
+    "PATCH",
+  );
+}
 
 export async function receiveMaterial(_: ActionState, fd: FormData) {
   return run(

@@ -3,17 +3,19 @@ import { ActionForm } from "@/components/ActionForm";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { Badge, Empty, Field, PageHeader, Panel, Progress, inputClass } from "@/components/ui";
 import { cancelWorkOrder, createWorkOrder, startWork } from "@/lib/actions";
-import { getLots, getMachines, getOperators, getWorkOrders } from "@/lib/api";
+import { getLots, getMachines, getMe, getOperators, getWorkOrders } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 export default async function WorkOrdersPage() {
-  const [orders, rawLots, machines, operators] = await Promise.all([
+  const [orders, rawLots, machines, operators, me] = await Promise.all([
     getWorkOrders(),
     getLots(["RAW"]),
     getMachines(),
     getOperators(),
+    getMe(),
   ]);
+  const isAdmin = me?.role === "ADMIN";
   const planned = orders.filter((wo) => wo.status === "PLANNED");
 
   return (
@@ -25,7 +27,7 @@ export default async function WorkOrdersPage() {
       />
       <main className="space-y-6 p-8">
         <div className="grid gap-6 xl:grid-cols-2">
-          <Panel title="작업지시 발행">
+          {isAdmin ? <Panel title="작업지시 발행">
             <ActionForm action={createWorkOrder} submitLabel="작업지시 발행">
               <Field label="원자재 LOT">
                 <select className={inputClass} name="lotId" required>
@@ -65,7 +67,7 @@ export default async function WorkOrdersPage() {
                 />
               </Field>
             </ActionForm>
-          </Panel>
+          </Panel> : null}
           <Panel title="작업 시작">
             {planned.length === 0 ? (
               <Empty>시작할 대기 작업지시가 없습니다.</Empty>
@@ -125,7 +127,7 @@ export default async function WorkOrdersPage() {
                       <Badge kind="wo" value={wo.status} />
                     </td>
                     <td className="w-72">
-                      {wo.status === "PLANNED" ? (
+                      {isAdmin && wo.status === "PLANNED" ? (
                         <ActionForm
                           action={cancelWorkOrder}
                           submitLabel="취소"

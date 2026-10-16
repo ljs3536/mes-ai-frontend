@@ -1,7 +1,8 @@
-// MES 화면. 입고, 작업지시, 가공, 품질, 출하, 이력, 센서·AI 진입을 한 앱에서 제공한다.
+// MES 화면. 입고, 작업지시, 가공, 품질, 출하를 제공하고, 사원·이력·센서·AI는 관리자만 연다.
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
+import { getMe } from "@/lib/api";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,14 +25,15 @@ export const metadata: Metadata = {
   description: "부품/설비 가공 공장 MES 1단계 뼈대",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const user = await getMe();
   return (
     <html
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} ${notoSansKr.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <AppShell>{children}</AppShell>
+        <AppShell user={user}>{children}</AppShell>
       </body>
     </html>
   );

@@ -1,3 +1,5 @@
+import { cookies } from "next/headers";
+import { SESSION_COOKIE } from "./session";
 import type {
   Dashboard,
   LotSummary,
@@ -19,10 +21,15 @@ export class ApiError extends Error {
 }
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
   const res = await fetch(`${API_URL}/api${path}`, {
     ...init,
     cache: "no-store",
-    headers: { "content-type": "application/json", ...init?.headers },
+    headers: {
+      "content-type": "application/json",
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+      ...init?.headers,
+    },
   });
   if (!res.ok) {
     const body = await res.json().catch(() => null);
@@ -41,6 +48,15 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
 function statusQuery(statuses?: string[]) {
   if (!statuses?.length) return "";
   return "?" + new URLSearchParams(statuses.map((s) => ["status", s])).toString();
+}
+
+export async function getMe() {
+  try {
+    return await api<Operator>("/auth/me");
+  } catch (e) {
+    if (e instanceof ApiError && (e.status === 401 || e.status === 403)) return null;
+    throw e;
+  }
 }
 
 export const getDashboard = () => api<Dashboard>("/dashboard");

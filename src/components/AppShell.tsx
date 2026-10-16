@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logout } from "@/lib/actions";
+import { roleLabel } from "@/lib/domain";
+import type { Operator } from "@/lib/types";
 
-// 화면 메뉴. 기능을 추가하거나 빼면 여기 항목과 해당 페이지 주석을 같이 고친다.
+// 화면 메뉴. 이력과 센서·AI, 사원 등록은 관리자만 본다.
 const NAV = [
   { href: "/", label: "대시보드" },
   { href: "/materials", label: "자재 입고" },
@@ -11,12 +14,21 @@ const NAV = [
   { href: "/shop-floor", label: "가공 라인" },
   { href: "/quality", label: "품질 검사" },
   { href: "/shipping", label: "출하" },
-  { href: "/traceability", label: "이력 추적" },
-  { href: "/monitoring", label: "센서·AI" },
+  { href: "/employees", label: "사원", admin: true },
+  { href: "/traceability", label: "이력 추적", admin: true },
+  { href: "/monitoring", label: "센서·AI", admin: true },
 ];
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: Operator | null;
+}) {
   const pathname = usePathname();
+  if (!user) return <>{children}</>;
+  const items = NAV.filter((item) => !item.admin || user.role === "ADMIN");
 
   return (
     <div className="flex min-h-screen">
@@ -29,7 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <p className="mt-1 text-xs text-zinc-500">Next.js · FastAPI · MariaDB</p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
-          {NAV.map((item) => {
+          {items.map((item) => {
             const active =
               item.href === "/"
                 ? pathname === "/"
@@ -49,9 +61,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-        <p className="px-5 py-4 text-[11px] leading-5 text-zinc-600">
-          입고 → 작업지시 → 가공 → 품질 → 출하
-        </p>
+        <div className="border-t border-white/8 px-5 py-4">
+          <p className="text-sm text-zinc-200">{user.name}</p>
+          <p className="text-[11px] text-zinc-500">{roleLabel[user.role] ?? user.role}</p>
+          <form action={logout} className="mt-2">
+            <button className="text-[11px] text-zinc-500 hover:text-zinc-300" type="submit">
+              로그아웃
+            </button>
+          </form>
+        </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">{children}</div>
     </div>

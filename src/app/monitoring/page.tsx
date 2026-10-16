@@ -10,8 +10,8 @@ export default function MonitoringPage() {
       />
       <main className="grid gap-6 p-8 lg:grid-cols-2">
         <Panel title="분석 화면">
-          <a href="http://localhost:3001" className="text-sm text-amber-300 hover:text-amber-200">
-            센서 분석 열기 (localhost:3001)
+          <a href="https://localhost:13001" className="text-sm text-amber-300 hover:text-amber-200">
+            센서 분석 열기
           </a>
           <p className="mt-3 text-xs text-zinc-500">
             진동 파형·스펙트럼, 에뮬레이터 설정, MLflow 모델 학습과 실시간 판정입니다.
