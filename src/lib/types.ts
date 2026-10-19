@@ -34,6 +34,15 @@ export type Lot = {
   updatedAt: string;
 };
 
+export type InspectionSpec = {
+  id: number;
+  materialName: string;
+  name: string;
+  unit: string;
+  lowerLimit: number;
+  upperLimit: number;
+};
+
 export type Inspection = {
   id: number;
   result: string;

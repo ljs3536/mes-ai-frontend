@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "./session";
 import type {
   Dashboard,
+  InspectionSpec,
   LotSummary,
   LotTrace,
   MachineDetail,
@@ -61,6 +62,7 @@ export async function getMe() {
 
 export const getDashboard = () => api<Dashboard>("/dashboard");
 export const getOperators = () => api<Operator[]>("/operators");
+export const getInspectionSpecs = () => api<InspectionSpec[]>("/inspection-specs");
 export const getMachines = () => api<MachineDetail[]>("/machines");
 export const getLots = (statuses?: string[]) =>
   api<LotSummary[]>(`/lots${statusQuery(statuses)}`);

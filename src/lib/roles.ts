@@ -14,6 +14,7 @@ export const NAV = [
   { href: "/quality", label: "품질 검사", roles: ["QUALITY"] },
   { href: "/shipping", label: "출하", roles: ["MATERIAL"] },
   { href: "/employees", label: "사원", roles: ["ADMIN"] },
+  { href: "/inspection-specs", label: "검사 기준", roles: ["ADMIN"] },
   { href: "/traceability", label: "이력 추적", roles: ["ADMIN"] },
   { href: "/monitoring", label: "센서·AI", roles: ["ADMIN"] },
 ];

@@ -127,16 +127,40 @@ export async function resumeMachine(_: ActionState, fd: FormData) {
 }
 
 export async function inspectLot(_: ActionState, fd: FormData) {
+  const readings: { specId: number; value: number }[] = [];
+  for (const [key, raw] of fd.entries()) {
+    const match = /^spec-(\d+)-\d+$/.exec(key);
+    const text = String(raw).trim();
+    if (!match || !text) continue;
+    readings.push({ specId: Number(match[1]), value: Number(text) });
+  }
   return run(
     `/lots/${num(fd, "lotId")}/inspections`,
     {
-      goodQty: num(fd, "goodQty"),
-      defectQty: num(fd, "defectQty"),
+      readings,
       disposition: str(fd, "disposition") || null,
       note: str(fd, "note") || null,
     },
     (lot) => `${lot.lotNo} 판정 반영 (${lot.status}, ${lot.quantity}ea)`,
   );
+}
+
+export async function createInspectionSpec(_: ActionState, fd: FormData) {
+  return run(
+    "/inspection-specs",
+    {
+      materialName: str(fd, "materialName"),
+      name: str(fd, "name"),
+      unit: str(fd, "unit"),
+      lowerLimit: Number(str(fd, "lowerLimit")),
+      upperLimit: Number(str(fd, "upperLimit")),
+    },
+    (spec) => `${spec.materialName} ${spec.name} 기준을 등록했습니다.`,
+  );
+}
+
+export async function deleteInspectionSpec(_: ActionState, fd: FormData) {
+  return run(`/inspection-specs/${num(fd, "specId")}`, undefined, () => "검사 기준을 지웠습니다.", "DELETE");
 }
 
 export async function shipLot(_: ActionState, fd: FormData) {
