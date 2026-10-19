@@ -1,4 +1,4 @@
-// 출하. 합격 LOT를 출하하고 출하 기록을 남긴다.
+// 출하. 완제품 LOT를 생산 수량으로 내보내고 출하 기록을 남긴다.
 import { ActionForm } from "@/components/ActionForm";
 import { Badge, Empty, Field, PageHeader, Panel, inputClass } from "@/components/ui";
 import { shipLot } from "@/lib/actions";
@@ -14,7 +14,7 @@ export default async function ShippingPage() {
     <>
       <PageHeader
         title="출하"
-        description="완제품 LOT를 출하 처리하고 자재-공정-출하 이력을 남깁니다."
+        description="완제품 LOT를 한 번에 출하합니다. 수량은 입고 수량이 아니라 가공이 끝난 수량입니다."
       />
       <main className="grid gap-6 p-8 xl:grid-cols-[360px_minmax(0,1fr)]">
         <Panel title="출하 처리">
@@ -26,7 +26,7 @@ export default async function ShippingPage() {
                 <select className={inputClass} name="lotId" required>
                   {stock.map((lot) => (
                     <option key={lot.id} value={lot.id}>
-                      {lot.lotNo} · {lot.materialName}
+                      {lot.lotNo} · {lot.materialName} · {lot.quantity}ea
                     </option>
                   ))}
                 </select>

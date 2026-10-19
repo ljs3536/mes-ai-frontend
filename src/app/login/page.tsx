@@ -1,4 +1,4 @@
-// 사원 로그인. 관리자와 작업자는 같은 화면에서 권한만 다르다.
+// 사원 로그인. 로그인하면 직무에 지정된 첫 화면으로 이동한다.
 import { ActionForm } from "@/components/ActionForm";
 import { Field, inputClass } from "@/components/ui";
 import { login } from "@/lib/actions";
@@ -10,7 +10,7 @@ export default function LoginPage() {
         <p className="text-[11px] tracking-[0.18em] text-amber-400/80 uppercase">Factory MES</p>
         <h1 className="mt-2 text-xl font-semibold text-zinc-50">사원 로그인</h1>
         <p className="mt-2 text-sm text-zinc-400">
-          처음 비밀번호는 관리자 admin1234, 작업자 work1234 입니다. 로그인 후 관리자가 바꿀 수 있습니다.
+          처음 비밀번호는 관리자 admin1234, 자재 mat1234, 생산관리 plan1234, 작업자 work1234, 품질 qual1234 입니다.
         </p>
         <div className="mt-5">
           <ActionForm action={login} submitLabel="로그인">

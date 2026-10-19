@@ -1,9 +1,9 @@
-// 가공 라인. 설비별 진행 수량과 상태를 보고 작업을 보류하거나 재개한다.
+// 작업자 설비. 배정된 설비의 작업만 시작하고, 정지와 재개도 그 설비만 한다.
 import { ActionForm } from "@/components/ActionForm";
 import { AutoRefresh } from "@/components/AutoRefresh";
-import { Badge, PageHeader, Panel, Progress, formatTime } from "@/components/ui";
-import { holdMachine, resumeMachine } from "@/lib/actions";
-import { getMachines } from "@/lib/api";
+import { Badge, Empty, Field, PageHeader, Panel, Progress, formatTime, inputClass } from "@/components/ui";
+import { holdMachine, resumeMachine, startWork } from "@/lib/actions";
+import { getMachines, getMe, getWorkOrders } from "@/lib/api";
 import { sensorLabel } from "@/lib/domain";
 import type { SensorValue } from "@/lib/types";
 
@@ -26,16 +26,18 @@ function SensorTile({ sensor }: { sensor: SensorValue }) {
 }
 
 export default async function ShopFloorPage() {
-  const machines = await getMachines();
+  const [me, machines, orders] = await Promise.all([getMe(), getMachines(), getWorkOrders()]);
+  const planned = orders.filter((wo) => wo.status === "PLANNED" && wo.machine.id === me?.machineId);
 
   return (
     <>
       <AutoRefresh />
       <PageHeader
-        title="가공 라인"
-        description="설비 에뮬레이터가 보내오는 진행수량과 센서값을 2초마다 갱신합니다."
+        title="내 설비"
+        description="배정된 설비의 진행 수량을 보고, 대기 중인 작업을 시작하거나 정지·재개합니다."
       />
       <main className="grid gap-6 p-8 lg:grid-cols-2">
+        {machines.length === 0 ? <Empty>담당 설비가 없습니다. 관리자에게 배정을 요청하세요.</Empty> : null}
         {machines.map((machine) => {
           const active = machine.activeWorkOrder;
           return (
@@ -73,20 +75,34 @@ export default async function ShopFloorPage() {
                   </p>
                   <Progress value={active.producedQty} max={active.quantity} />
                   {machine.status === "RUN" ? (
-                    <ActionForm action={holdMachine} submitLabel="설비 정지 / LOT HOLD" className="space-y-2 pt-1">
+                    <ActionForm action={holdMachine} submitLabel="설비 정지" className="space-y-2 pt-1">
                       <input type="hidden" name="machineId" value={machine.id} />
                     </ActionForm>
                   ) : null}
                 </div>
               ) : (
-                <p className="rounded-xl bg-white/4 p-4 text-sm text-zinc-500">
-                  대기 중. 작업지시에서 시작하면 가동(RUN)으로 바뀌고 에뮬레이터가 가공을 시작합니다.
-                </p>
+                <div className="rounded-xl bg-white/4 p-4 text-sm text-zinc-500">
+                  {planned.length > 0 ? (
+                    <ActionForm action={startWork} submitLabel="작업 시작" className="space-y-2">
+                      <Field label="대기 작업">
+                        <select className={inputClass} name="workOrderId" required>
+                          {planned.map((wo) => (
+                            <option key={wo.id} value={wo.id}>
+                              {wo.woNo} · {wo.productName} · {wo.lot.lotNo}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                    </ActionForm>
+                  ) : (
+                    <p>대기 중인 작업지시가 없습니다.</p>
+                  )}
+                </div>
               )}
               {machine.status === "STOP" ? (
                 <ActionForm
                   action={resumeMachine}
-                  submitLabel="점검 완료 (대기 복귀)"
+                  submitLabel="재개 (가공 계속)"
                   variant="secondary"
                   className="mt-4 space-y-2"
                 >

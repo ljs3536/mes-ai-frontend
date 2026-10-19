@@ -21,7 +21,7 @@ export default function MonitoringPage() {
           <ul className="space-y-3 text-sm text-zinc-400">
             <li>수집기가 파형 블록에서 RMS, 첨도, 1x/2x 성분을 계산합니다.</li>
             <li>분석 백엔드의 운영 모델이 특징값을 받아 이상을 판정합니다.</li>
-            <li>연속 3회 이상이면 설비를 STOP하고 LOT를 HOLD로 바꿉니다.</li>
+            <li>연속 3회 이상이면 설비를 정지합니다. LOT는 가공중으로 남고, 재개하면 이어서 가공합니다.</li>
           </ul>
         </Panel>
       </main>

@@ -7,6 +7,7 @@ const TONE: Record<string, string> = {
   HOLD: "bg-rose-500/15 text-rose-300",
   IN_STOCK: "bg-emerald-500/15 text-emerald-300",
   SHIPPED: "bg-zinc-500/20 text-zinc-300",
+  SCRAPPED: "bg-rose-500/15 text-rose-300",
   PLANNED: "bg-zinc-500/20 text-zinc-300",
   IN_PROGRESS: "bg-amber-500/15 text-amber-300",
   COMPLETED: "bg-emerald-500/15 text-emerald-300",

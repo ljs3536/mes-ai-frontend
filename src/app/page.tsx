@@ -9,9 +9,10 @@ const PIPELINE = [
   { key: "raw", href: "/materials", label: "자재 입고" },
   { key: "wip", href: "/shop-floor", label: "가공중" },
   { key: "processed", href: "/quality", label: "가공완료" },
-  { key: "hold", href: "/quality", label: "품질/HOLD" },
+  { key: "hold", href: "/quality", label: "품질대기" },
   { key: "stock", href: "/shipping", label: "완제품" },
   { key: "shipped", href: "/shipping", label: "출하" },
+  { key: "scrapped", href: "/", label: "폐기" },
 ] as const;
 
 export default async function HomePage() {
@@ -24,7 +25,7 @@ export default async function HomePage() {
         description="고압 밸브 · 정밀 배관 · 센서 하우징 가공 라인의 입고부터 출하까지"
       />
       <main className="space-y-6 p-8">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-7">
           {PIPELINE.map((step, index) => (
             <Link key={step.key} href={step.href}>
               <Panel className="hover:border-amber-500/30">
@@ -45,7 +46,7 @@ export default async function HomePage() {
             [자재 입고/LOT 발행] → [작업지시] → [Machine A/B 가공] → [품질 판정] →
             [출하 및 이력]
             <span className="mt-2 block text-zinc-500">
-              2단계: 센서 모니터링 · AI 이상 감지 시 설비 STOP / LOT HOLD
+              센서 이상이면 설비만 정지하고, 가공중 LOT는 재개로 이어 가공합니다.
             </span>
           </p>
         </Panel>

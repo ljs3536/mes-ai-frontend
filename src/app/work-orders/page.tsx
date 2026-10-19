@@ -1,33 +1,29 @@
-// 작업지시. 생성, 작업자 시작, 예정 상태 취소를 한다. 취소는 삭제 대신 사유를 이력에 남긴다.
+// 작업지시. 생산관리가 발행하고 시작 전에 취소한다. 시작은 배정된 작업자가 한다.
 import { ActionForm } from "@/components/ActionForm";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { Badge, Empty, Field, PageHeader, Panel, Progress, inputClass } from "@/components/ui";
-import { cancelWorkOrder, createWorkOrder, startWork } from "@/lib/actions";
-import { getLots, getMachines, getMe, getOperators, getWorkOrders } from "@/lib/api";
+import { cancelWorkOrder, createWorkOrder } from "@/lib/actions";
+import { getLots, getMachines, getWorkOrders } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 export default async function WorkOrdersPage() {
-  const [orders, rawLots, machines, operators, me] = await Promise.all([
+  const [orders, rawLots, machines] = await Promise.all([
     getWorkOrders(),
     getLots(["RAW"]),
     getMachines(),
-    getOperators(),
-    getMe(),
   ]);
-  const isAdmin = me?.role === "ADMIN";
-  const planned = orders.filter((wo) => wo.status === "PLANNED");
 
   return (
     <>
       <AutoRefresh intervalMs={3000} />
       <PageHeader
         title="작업지시"
-        description="관리자가 설비와 제품을 지정하고, 작업자가 본인 ID를 선택해 작업을 시작하면 LOT가 WIP로 전환됩니다."
+        description="생산관리가 설비와 수량을 지정해 발행합니다. 작업 시작은 그 설비의 작업자가 합니다."
       />
       <main className="space-y-6 p-8">
         <div className="grid gap-6 xl:grid-cols-2">
-          {isAdmin ? <Panel title="작업지시 발행">
+          <Panel title="작업지시 발행">
             <ActionForm action={createWorkOrder} submitLabel="작업지시 발행">
               <Field label="원자재 LOT">
                 <select className={inputClass} name="lotId" required>
@@ -67,32 +63,6 @@ export default async function WorkOrdersPage() {
                 />
               </Field>
             </ActionForm>
-          </Panel> : null}
-          <Panel title="작업 시작">
-            {planned.length === 0 ? (
-              <Empty>시작할 대기 작업지시가 없습니다.</Empty>
-            ) : (
-              <ActionForm action={startWork} submitLabel="작업 시작 (WIP)">
-                <Field label="작업지시">
-                  <select className={inputClass} name="workOrderId" required>
-                    {planned.map((wo) => (
-                      <option key={wo.id} value={wo.id}>
-                        {wo.woNo} · {wo.productName} / {wo.machine.name}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label="작업자">
-                  <select className={inputClass} name="operatorId" required>
-                    {operators.map((op) => (
-                      <option key={op.id} value={op.id}>
-                        {op.name} ({op.employeeNo})
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-              </ActionForm>
-            )}
           </Panel>
         </div>
         <Panel title="작업지시 목록">
@@ -127,7 +97,7 @@ export default async function WorkOrdersPage() {
                       <Badge kind="wo" value={wo.status} />
                     </td>
                     <td className="w-72">
-                      {isAdmin && wo.status === "PLANNED" ? (
+                      {wo.status === "PLANNED" ? (
                         <ActionForm
                           action={cancelWorkOrder}
                           submitLabel="취소"

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { api, ApiError } from "./api";
+import { ROLE_HOME } from "./roles";
 import { SESSION_COOKIE } from "./session";
 
 export type ActionState = { ok: boolean; message: string } | null;
@@ -32,7 +33,7 @@ const num = (fd: FormData, key: string) => Number(fd.get(key));
 
 export async function login(_: ActionState, fd: FormData) {
   try {
-    const data = await api<{ token: string }>("/auth/login", {
+    const data = await api<{ token: string; operator: { role: string } }>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ employeeNo: str(fd, "employeeNo"), password: str(fd, "password") }),
     });
@@ -43,11 +44,11 @@ export async function login(_: ActionState, fd: FormData) {
       path: "/",
       maxAge: 60 * 60 * 12,
     });
+    redirect(ROLE_HOME[data.operator.role] ?? "/");
   } catch (e) {
     if (e instanceof ApiError) return { ok: false, message: e.message };
     throw e;
   }
-  redirect("/");
 }
 
 export async function logout() {
@@ -63,6 +64,7 @@ export async function createEmployee(_: ActionState, fd: FormData) {
       name: str(fd, "name"),
       role: str(fd, "role"),
       password: str(fd, "password"),
+      machineId: str(fd, "machineId") ? num(fd, "machineId") : null,
     },
     (op) => `${op.name} 사원을 등록했습니다.`,
   );
@@ -76,6 +78,7 @@ export async function updateEmployee(_: ActionState, fd: FormData) {
       name: str(fd, "name"),
       role: str(fd, "role"),
       password: password || null,
+      machineId: str(fd, "machineId") ? num(fd, "machineId") : null,
     },
     (op) => `${op.name} 사원 정보를 바꿨습니다.`,
     "PATCH",
@@ -104,11 +107,7 @@ export async function createWorkOrder(_: ActionState, fd: FormData) {
 }
 
 export async function startWork(_: ActionState, fd: FormData) {
-  return run(
-    `/work-orders/${num(fd, "workOrderId")}/start`,
-    { operatorId: num(fd, "operatorId") },
-    (wo) => `${wo.woNo} 작업 시작`,
-  );
+  return run(`/work-orders/${num(fd, "workOrderId")}/start`, undefined, (wo) => `${wo.woNo} 작업 시작`);
 }
 
 export async function cancelWorkOrder(_: ActionState, fd: FormData) {
@@ -120,18 +119,23 @@ export async function cancelWorkOrder(_: ActionState, fd: FormData) {
 }
 
 export async function holdMachine(_: ActionState, fd: FormData) {
-  return run(`/machines/${num(fd, "machineId")}/hold`, undefined, (m) => `${m.name} 정지 · LOT HOLD`);
+  return run(`/machines/${num(fd, "machineId")}/hold`, undefined, (m) => `${m.name} 정지 · 가공 일시정지`);
 }
 
 export async function resumeMachine(_: ActionState, fd: FormData) {
-  return run(`/machines/${num(fd, "machineId")}/resume`, undefined, (m) => `${m.name} 대기 복귀`);
+  return run(`/machines/${num(fd, "machineId")}/resume`, undefined, (m) => `${m.name} 가공 재개`);
 }
 
 export async function inspectLot(_: ActionState, fd: FormData) {
   return run(
     `/lots/${num(fd, "lotId")}/inspections`,
-    { result: str(fd, "result"), note: str(fd, "note") || null },
-    (lot) => `${lot.lotNo} 판정 반영 (${lot.status})`,
+    {
+      goodQty: num(fd, "goodQty"),
+      defectQty: num(fd, "defectQty"),
+      disposition: str(fd, "disposition") || null,
+      note: str(fd, "note") || null,
+    },
+    (lot) => `${lot.lotNo} 판정 반영 (${lot.status}, ${lot.quantity}ea)`,
   );
 }
 

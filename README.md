@@ -8,14 +8,15 @@
 
 | 경로 | 기능 |
 | --- | --- |
-| `/` | 공장 운영 현황 (LOT 단계별 수, 설비, 알림) |
-| `/materials` | 자재 입고, `RAW-YYYYMMDD-NNN` LOT 발행 |
-| `/work-orders` | 작업지시 발행, 작업자 선택 후 작업 시작 (WIP) |
-| `/shop-floor` | Machine A/B 통신 상태·센서값·진행률 (2초 자동 갱신), 설비 정지·LOT HOLD, 점검 완료 |
-| `/quality` | 가공완료 LOT 품질 판정 (합격 → 완제품, 불합격 → HOLD) |
-| `/shipping` | 완제품 출하 |
-| `/traceability` | LOT 이력 타임라인 |
-| `/monitoring` | 2단계 센서·AI 연동 자리 |
+| `/` | 관리자 공장 현황 |
+| `/materials` | 자재 직무. 입고 |
+| `/work-orders` | 생산관리 직무. 작업지시 발행과 시작 전 취소 |
+| `/shop-floor` | 작업자 직무. 배정된 설비에서 시작, 정지, 재개 |
+| `/quality` | 품질 직무. 합격·불량 수량, 불량은 재가공 또는 폐기 |
+| `/shipping` | 자재 직무. 생산 수량 출하 |
+| `/employees` | 관리자. 사원 직무와 담당 설비 배정 |
+| `/traceability` | 관리자. LOT 이력 |
+| `/monitoring` | 관리자. 센서·AI |
 
 ## 로컬 실행
 

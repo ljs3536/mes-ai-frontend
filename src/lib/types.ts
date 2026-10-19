@@ -3,6 +3,7 @@ export type Operator = {
   employeeNo: string;
   name: string;
   role: string;
+  machineId: number | null;
 };
 
 export type Machine = {
@@ -36,6 +37,9 @@ export type Lot = {
 export type Inspection = {
   id: number;
   result: string;
+  goodQty: number | null;
+  defectQty: number | null;
+  disposition: string | null;
   note: string | null;
   createdAt: string;
 };
@@ -97,7 +101,7 @@ export type MachineDetail = Machine & {
 
 export type Dashboard = {
   counts: Record<
-    "raw" | "wip" | "processed" | "hold" | "stock" | "shipped" | "running",
+    "raw" | "wip" | "processed" | "hold" | "stock" | "shipped" | "scrapped" | "running",
     number
   >;
   machines: Machine[];

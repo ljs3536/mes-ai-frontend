@@ -1,4 +1,4 @@
-// MES 화면. 입고, 작업지시, 가공, 품질, 출하를 제공하고, 사원·이력·센서·AI는 관리자만 연다.
+// MES 화면. 직무마다 지정된 페이지만 열고, 관리자는 사원의 직무와 담당 설비를 정한다.
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { AppShell } from "@/components/AppShell";

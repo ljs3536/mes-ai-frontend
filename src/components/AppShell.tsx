@@ -4,20 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/lib/actions";
 import { roleLabel } from "@/lib/domain";
+import { NAV } from "@/lib/roles";
 import type { Operator } from "@/lib/types";
 
-// 화면 메뉴. 이력과 센서·AI, 사원 등록은 관리자만 본다.
-const NAV = [
-  { href: "/", label: "대시보드" },
-  { href: "/materials", label: "자재 입고" },
-  { href: "/work-orders", label: "작업지시" },
-  { href: "/shop-floor", label: "가공 라인" },
-  { href: "/quality", label: "품질 검사" },
-  { href: "/shipping", label: "출하" },
-  { href: "/employees", label: "사원", admin: true },
-  { href: "/traceability", label: "이력 추적", admin: true },
-  { href: "/monitoring", label: "센서·AI", admin: true },
-];
+// 화면 메뉴. 직무에 지정된 페이지만 보여 준다.
 
 export function AppShell({
   children,
@@ -28,7 +18,7 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   if (!user) return <>{children}</>;
-  const items = NAV.filter((item) => !item.admin || user.role === "ADMIN");
+  const items = NAV.filter((item) => item.roles.includes(user.role));
 
   return (
     <div className="flex min-h-screen">

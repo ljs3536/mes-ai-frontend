@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { ROLE_HOME, roleCanOpen } from "@/lib/roles";
 import { SESSION_COOKIE } from "@/lib/session";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
-const ADMIN_PATHS = ["/traceability", "/monitoring", "/employees"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -24,8 +24,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const user = (await me.json()) as { role?: string };
-  if (ADMIN_PATHS.some((path) => pathname.startsWith(path)) && user.role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/", request.url));
+  const role = user.role ?? "";
+  const home = ROLE_HOME[role];
+  if (!home || !roleCanOpen(role, pathname)) {
+    return NextResponse.redirect(new URL(home ?? "/login", request.url));
   }
   return NextResponse.next();
 }
